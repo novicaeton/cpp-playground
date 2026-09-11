@@ -1,0 +1,7 @@
+# CLion
+.idea/
+cmake-build-*/
+
+# Compiled executables
+01-basics/*
+!01-basics/*.cpp
