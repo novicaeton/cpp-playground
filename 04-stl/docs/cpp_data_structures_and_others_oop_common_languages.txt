@@ -1,0 +1,119 @@
+================================================================================
+DATA STRUCTURES & OOP COMPARISON: C++ vs JAVA vs C# vs PHP
+[EN] Cross-Language Reference for Modern C++ and Low-Latency Performance
+[SRB] Uporedni pregled struktura podataka i OOP koncepata kroz jezike
+================================================================================
+
+--------------------------------------------------------------------------------
+1. DATA STRUCTURES MAP / MAPIRANJE STRUKTURA PODATAKA
+--------------------------------------------------------------------------------
+
+[EN] Dynamic Array (Contiguous memory, O(1) random access, amortized O(1) push)
+[SRB] Dinamički niz (Kontinualna memorija, O(1) nasumični pristup, amortizovani O(1) push)
+  - C++:   std::vector<T>
+  - Java:  ArrayList<T>
+  - C#:    List<T>
+  - PHP:   array (indexed part)
+
+[EN] Fixed-Size Array (Stack/Contiguous memory, zero allocation overhead)
+[SRB] Niz fiksne veličine (Stack/Kontinualna memorija, nula alokativnog overhead-a)
+  - C++:   std::array<T, N>
+  - Java:  T[]
+  - C#:    T[]
+  - PHP:   array
+
+[EN] Hash Map / Dictionary (Unordered, O(1) average lookup/insert, Hash Table)
+[SRB] Hash Mapa / Rečnik (Nesortiran, O(1) prosečna pretraga/upis, Hash Tabela)
+  - C++:   std::unordered_map<K, V>
+  - Java:  HashMap<K, V>
+  - C#:    Dictionary<TKey, TValue>
+  - PHP:   array (associative part)
+
+[EN] Sorted Map (Ordered by key, O(log N) lookup/insert, Red-Black Tree)
+[SRB] Sortirana Mapa (Sortirana po ključu, O(log N) pretraga/upis)
+  - C++:   std::map<K, V>
+  - Java:  TreeMap<K, V>
+  - C#:    SortedDictionary<TKey, TValue>
+  - PHP:   N/A (Built-in arrays retain insertion order, not key sorting)
+
+[EN] Hash Set (Unordered collection of unique keys, O(1) average lookup)
+[SRB] Hash Skup (Nesortirana kolekcija jedinstvenih ključeva, O(1) prosečna pretraga)
+  - C++:   std::unordered_set<T>
+  - Java:  HashSet<T>
+  - C#:    HashSet<T>
+  - PHP:   N/A (Simulated using array_flip or associative array keys)
+
+[EN] Sorted Set (Ordered collection of unique keys, O(log N) lookup, Red-Black Tree)
+[SRB] Sortirani Skup (Sortirana kolekcija jedinstvenih ključeva, O(log N) pretraga)
+  - C++:   std::set<T>
+  - Java:  TreeSet<T>
+  - C#:    SortedSet<T>
+  - PHP:   N/A
+
+[EN] Doubly-Linked List (Non-contiguous memory, O(1) insert/delete, poor cache locality)
+[SRB] Dvostruko povezana lista (Nekontinualna memorija, O(1) unos/brisanje, loš cache)
+  - C++:   std::list<T>
+  - Java:  LinkedList<T>
+  - C#:    LinkedList<T>
+  - PHP:   SplDoublyLinkedList
+
+[EN] Singly-Linked List (Forward-only traversal, lower memory overhead than doubly-linked)
+[SRB] Jednostruko povezana lista (Samo kretanje unapred, manji memorijski utrošak)
+  - C++:   std::forward_list<T>
+  - Java:  N/A
+  - C#:    N/A
+  - PHP:   SplForwardList
+
+[EN] Priority Queue / Binary Heap (O(log N) push/pop, O(1) top/peek)
+[SRB] Red sa prioritetom / Binarni Hip (O(log N) push/pop, O(1) uvid u vrh)
+  - C++:   std::priority_queue<T>
+  - Java:  PriorityQueue<T>
+  - C#:    PriorityQueue<TElement, TPriority>
+  - PHP:   SplPriorityQueue
+
+[EN] First-In-First-Out Queue (FIFO)
+[SRB] Običan Red (FIFO - Prvi unutra, prvi napolje)
+  - C++:   std::queue<T>
+  - Java:  Queue<T> / ArrayDeque<T>
+  - C#:    Queue<T>
+  - PHP:   SplQueue
+
+[EN] Last-In-First-Out Stack (LIFO)
+[SRB] Stek (LIFO - Poslednji unutra, prvi napolje)
+  - C++:   std::stack<T>
+  - Java:  ArrayDeque<T> / Stack<T>
+  - C#:    Stack<T>
+  - PHP:   SplStack
+
+
+--------------------------------------------------------------------------------
+2. KEY MEMORY & OOP DIFFERENCES
+--------------------------------------------------------------------------------
+
+[EN] Memory Allocation Model
+[SRB] Model alokacije memorije
+  - Java / C#: Objects are reference types allocated on the Heap by default. Managed by Garbage Collector (GC).
+  - PHP: Dynamic interpreted language with ref-counting GC. Everything is wrapped in zval structures.
+  - C++: Value semantics by default. Objects can live directly on the Stack (zero GC pause).
+    Allocated on Heap ONLY when explicitly requested (new / std::make_unique).
+
+[EN] Value vs Reference Semantics
+[SRB] Semantika Vrednosti naspram Semantike Referenci
+  - Java / C# / PHP: Reference Semantics by default. Assignment (`b = a`) copies the address/reference.
+    Both variables point to the SAME underlying Heap object. Mutating `b` modifies `a`.
+  - C++: Value Semantics by default. Assignment (`b = a`) creates a FULL INDEPENDENT COPY of the object.
+    `a` and `b` occupy separate memory locations. Mutating `b` leaves `a` untouched.
+    Reference behavior in C++ must be requested explicitly via references (`&`) or pointers (`*`, `std::shared_ptr`).
+
+[EN] Cache Locality & Low-Latency Impact
+[SRB] Cache lokalnost i uticaj na Low-Latency
+  - Java / C#: Collections like ArrayList<Entity> hold pointers/references to scattered Heap objects.
+    Causes CPU Cache Misses during iteration.
+  - C++: std::vector<Entity> stores objects contiguously in memory.
+    Massive CPU Cache hits -> Crucial for low-latency systems (e.g. trading engines at ICE).
+
+[EN] Hash Table Internals
+[SRB] Unutrašnjost Hash Tabela
+  - std::unordered_map uses bucket chaining (linked list nodes per bucket).
+  - Modern C++ Alternative (C++23 std::flat_map / Abseil flat_hash_map):
+    Uses open addressing in flat arrays for max cache locality and higher speed.
